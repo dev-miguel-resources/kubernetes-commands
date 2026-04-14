@@ -1,0 +1,17 @@
+# Versión de la api de Kubernetes que se usa para este objeto
+apiVersion: v1
+# Tipo de recurso que vas a desplegar
+kind: Pod
+# Descripción del recurso
+metadata:
+  name: myapp
+  # etiquetas para identificar y seleccionar el pod
+  labels:
+    run: my-app-nginx
+    env: dev
+    team: txalcala
+# Especificaciones de ejecución del contenedor que alberga el pod
+spec:
+  containers:
+    - name: myapp2
+      image: nginx:alpine

@@ -17,3 +17,51 @@ minikube start
 ```
 minikube status
 ```
+
+### 4. Para detener el cluster mi minikube
+
+```
+minikube stop
+```
+
+### 5. Para eliminar el cluster mi minikube
+
+```
+minikube delete
+```
+
+### 6. Para eliminar un cluster corrupto y dejarlo limpio para un nuevo levantamiento
+
+```
+minikube delete --all --purge
+```
+
+### 6. Para obtener la ip actual del nodo de minikube
+
+```
+minikube ip
+```
+
+### 7. Para obtener la lista de comandos de minikube
+
+```
+minikube --help
+```
+
+### 8. Para obtener la lista de comandos de arranque de minikube
+
+```
+minikube start --help
+```
+
+### 9. Para obtener la lista de plugins (complementos)
+
+```
+minikube addons list
+```
+
+### 10. Para acceder a la terminal del cluster mediante ssh
+
+```
+minikube ssh
+```
