@@ -12,11 +12,12 @@ kubectl version
 kubectl get all
 ```
 
-### 3. Para listar los pods de mi espacio de trabajo
+### 3. Para listar los pods de mi espacio de trabajo y uno en específico
 
 ```
 kubectl get pods
 kubectl get po
+kubectl get po nginx-pod (nombre)
 ```
 
 ### 4. Para crear un pod
@@ -95,4 +96,128 @@ kubectl get po myapp --show-labels
 
 ```
 kubectl get po -l env=dev
+kubectl get po -l team=txalcala,run=my-app-nginx,type=backend (filtrado múltiple)
+kubectl get po -l run!=nginx-pod3 (filtrado por negación de label)
+```
+
+### 15. Para ver el api de objetos de kubernetes
+```
+kubectl api-resources
+```
+
+### 16. Para filtrar una columna del api-resources
+```
+kubectl api-resources --namespaced=true
+kubectl api-resources | findStr apps/v1 (windows)
+kubectl api-resources | grep apps/v1 (linux/mac)
+```
+
+### 17. Para obtener mayor información de mis pods o de un pod en específico
+```
+kubectl get po -o wide
+kubectl get po nginx-pod2 -o wide
+kubectl get po -o wide --show-labels (incorporando las etiquetas)
+```
+
+### 18. Para eliminar una o más etiquetas de un pod
+```
+kubectl label po myapp2 type-
+kubectl label po myapp2 env- team- (eliminado múltiple)
+```
+
+### 19. Para exportar el resultado de un comando hacia un archivo
+```
+kubectl get po -o wide --show-labels > pods.txt
+```
+
+### 20. Para exponer una aplicación mediante emparejamiento de puertos
+```
+kubectl port-forward pod/myapp2 8080:80
+```
+
+### 21. Para listar los namespaces
+```
+kubectl get namespaces
+```
+
+### 22. Para crear un namespace
+```
+kubectl create ns dev
+```
+
+### 23. Para listar mis namespaces
+```
+kubectl get ns
+```
+
+### 24. Para obtener todos los objetos de un namespace
+```
+kubectl get all -n dev
+```
+
+### 25. Para obtener los nodos sanos
+```
+kubectl get lease -n kube-node-lease
+```
+
+### 26. Para obtener las configuraciones de uso del cluster
+```
+kubectl get configmaps -n kube-public
+```
+
+### 27. Para filtrar una lista de namespaces
+```
+kubectl get ns | findStr public (windows)
+kubectl get ns | grep public (windows)
+```
+
+### 27. Para crear un objeto dentro de un namespace
+```
+kubectl run nginx --image=nginx -n dev
+```
+
+### 28. Para obtener todos mis objetos de un determinado namespace
+```
+kubectl get all -n dev
+```
+
+### 29. Para obtener objetos especificos de un namespace
+```
+kubectl get po -n dev
+```
+
+### 30. Para hacer cambio de contexto entre namespaces
+```
+kubectl config set-context --current --namespace=dev
+```
+
+### 31. Para asignar un namespace imperativamente a un manifiesto
+```
+kubectl apply -f pod.yml -n dev
+```
+
+### 32. Para generar la exposición de un recurso de un determinado namespace
+```
+kubectl port-forward pod/myapp2 8080:80 -n qa
+```
+
+### 33. Para eliminar un namespace
+```
+kubectl delete ns qa
+```
+
+### 34. Para disponibilizar un replicaset
+```
+kubectl apply -f replicaset.yml
+```
+
+### 35. Para listar mis replicasets
+```
+kubectl get replicasets
+kubectl get rs
+```
+
+### 36. Para eliminar un replicaset
+```
+kubectl delete rs rs-test
 ```

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-test
+  namespace: dev
+  labels:
+    app: myapp
+    team: txalcala
+spec:
+  replicas: 3 # cantidad de replicas a disponibilizar
+  selector:
+    matchLabels: # hace referencia hacia quien define las replicas
+      app: test # permite hacer match con los pods especificados en la propiedad template.metadata.labels
+  template:
+    metadata:
+      labels:
+        app: test # esta es la propiedad que leer el selector matchLabels del replicaset
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:perl

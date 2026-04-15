@@ -1,0 +1,6 @@
+NAME         READY   STATUS    RESTARTS      AGE   IP            NODE       NOMINATED NODE   READINESS GATES   LABELS
+myapp        1/1     Running   0             20m   10.244.0.9    minikube   <none>           <none>            env=dev,run=my-app-nginx,team=txalcala
+myapp2       1/1     Running   1 (16m ago)   17m   10.244.0.10   minikube   <none>           <none>            run=my-app-nginx
+nginx-pod    1/1     Running   0             22m   10.244.0.6    minikube   <none>           <none>            run=nginx-pod
+nginx-pod2   1/1     Running   0             22m   10.244.0.7    minikube   <none>           <none>            run=nginx-pod2
+nginx-pod3   1/1     Running   0             22m   10.244.0.8    minikube   <none>           <none>            run=nginx-pod3
