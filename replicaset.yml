@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: rs-test
-  namespace: dev
+  #namespace: dev
   labels:
     app: myapp
     team: txalcala
@@ -19,3 +19,5 @@ spec:
       containers:
         - name: nginx
           image: nginx:perl
+          #image: nginx:alpine
+          #image: nginx:1.25

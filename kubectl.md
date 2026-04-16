@@ -221,3 +221,82 @@ kubectl get rs
 ```
 kubectl delete rs rs-test
 ```
+
+### 37. Para filtrar pods asociados a replicasets mediante el selector
+```
+kubectl get po --selector=app=test
+```
+
+### 38. Para visualizar un manifiesto de un replicaset por terminal
+```
+kubectl get rs rs-test -o yaml
+```
+
+### 39. Para escalar la cantidad de replicas de un replicaset
+```
+kubectl scale rs rs-test --replicas=5
+```
+
+### 40. Para lanzar un deployment mediante manifiesto
+```
+kubectl apply -f deployment.yml
+```
+
+### 41. Para listar los deployments
+```
+kubectl get deployment
+kubectl get deployments
+kubectl get deploy
+```
+
+### 42. Para obtener un deployment especifico
+```
+kubectl get deployment nginx-deploy
+kubectl get deployments nginx-deploy
+kubectl get deploy nginx-deploy
+```
+
+### 43. Para filtrar deploys por texto y labels
+```
+kubectl get deploy | findStr 2 (windows)
+kubectl get deploy | grep 2 (linux/mac)
+kubectl get deploy -l app=deploy
+```
+
+### 44. Para inspeccionar un deployment
+```
+kubectl describe deploy nginx-deploy
+```
+
+### 45. Para eliminar un deployment
+```
+kubectl delete deploy nginx-deploy2
+kubectl delete -f deployment.yml
+```
+
+### 46. Para verificar el despliegue exitoso de un deploy
+```
+kubectl rollout status deploy nginx-deploy
+```
+
+### 47. Para revisar el historial de versiones de mis deploy
+```
+kubectl rollout history deploy nginx-deploy
+```
+
+### 48. Para hacer un rollback controlado
+```
+kubectl rollout undo deploy nginx-deploy --to-revision=3
+```
+
+### 48. Para modificar directamente la imagen de un deploy
+```
+kubectl set image deployment/nginx-deploy nginx=nginx:latest --record
+record será deprecado en el futuro
+```
+
+### 49. Para exponer un pod de un replicaset asociado a un deploy
+```
+kubectl port-forward pod/nginx-deploy-f576985cc-cntk2 8080:80
+```
+

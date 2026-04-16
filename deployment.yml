@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  annotations:
+    kubernetes.io/change-cause: "Update image version to nginx:1.25"
+  labels:
+    app: deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          #image: nginx:perl
+          image: nginx:1.25
+          #image: nginx:alpine
+          ports:
+            - containerPort: 80
