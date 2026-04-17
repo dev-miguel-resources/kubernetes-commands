@@ -65,3 +65,15 @@ minikube addons list
 ```
 minikube ssh
 ```
+
+### 11. Para levantar un cluster con una x cantidad de nodos
+
+```
+minikube start --nodes 2
+```
+
+### 12. Para conectarme a un nodo especifico por terminal
+
+```
+minikube ssh -n minikube-m02
+```

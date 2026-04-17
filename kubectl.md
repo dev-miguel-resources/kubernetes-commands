@@ -300,3 +300,28 @@ record será deprecado en el futuro
 kubectl port-forward pod/nginx-deploy-f576985cc-cntk2 8080:80
 ```
 
+
+### 50. Para obtener los nodos disponibles
+```
+minikube start --nodes 2
+```
+
+### 51. Para hacer la verificación de nodos de mis daemonsets
+```
+kubectl get pods -n logging -o wide
+```
+
+### 51. Para listar los daemonsets
+```
+kubectl get ds log-agent -n logging
+```
+
+### 52. Para ver los resultados de logs en tiempo real
+```
+kubectl logs -f log-agent-2z4jt
+```
+
+### 53. Para verificar la persistencia de los logs desde el volumen del contenedor
+```
+kubectl exec log-agent-2z4jt -- cat /var/log/agent/log.json
+```

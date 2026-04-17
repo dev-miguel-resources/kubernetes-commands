@@ -1,0 +1,44 @@
+# daemon sin volume especificado
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-agent # Nombre del daemon
+  namespace: logging # Namespace donde se desplegará
+  labels:
+    k8s-app: agent-logging
+spec:
+  selector:
+    matchLabels:
+      name: log-agent # Selector que identifica que pods pertenecen a este daemonset
+  template: # Plantilla del pod que se creará en cada nodo
+    metadata:
+      labels:
+        name: log-agent # Etiqueta que debe coincidir con el selector
+    spec:
+      containers:
+        - name: log-agent # Nombre del contenedor dentro del pod
+          image: busybox:1.36 # imagen ligera basada en linux, ideal para pruebas con comandos
+          command:
+            - /bin/sh # Ejecución por shell
+            - -c # Permite pasar un script como un string
+            - |
+              # Bucle infinito -> el contenedor nunca termina
+              while true; do
+
+                # Obtiene el timestamp en formato ISO: (ej: 2026-04-17T15:00:00Z)
+                TIMESTAMP=$(date -Iseconds) # formato iso
+
+                # $HOSTNAME en kubernetes corresponde al nombre del nodo
+                NODE_NAME=$HOSTNAME
+
+                # Obtener el nombre del pod
+                POD_NAME=$(hostname)
+
+                # Imprimir un log en un formato: json
+                # Esto simula un agente de logging estructurado
+                echo "{\"timestamp\":\"$TIMESTAMP\",\"node\":\"NODE_NAME\",\"pod\":\"$POD_NAME\",\"level\":\"INFO\", \"message\":\"log simulado desde nodo\"}"
+
+                # Espera 5 seg. antes de generar el siguiente log
+                sleep 5
+
+              done

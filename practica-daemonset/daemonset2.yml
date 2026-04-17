@@ -1,0 +1,93 @@
+# daemon con Empty dir volume
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-agent # Nombre del daemon
+  namespace: logging # Namespace donde se desplegará
+  labels:
+    k8s-app: agent-logging
+spec:
+  selector:
+    matchLabels:
+      name: log-agent # Selector que identifica que pods pertenecen a este daemonset
+  template: # Plantilla del pod que se creará en cada nodo
+    metadata:
+      labels:
+        name: log-agent # Etiqueta que debe coincidir con el selector
+    spec:
+      containers:
+        - name: log-agent # Nombre del contenedor dentro del pod
+          image: busybox:1.36 # imagen ligera basada en linux, ideal para pruebas con comandos
+          command:
+            - /bin/sh # Ejecución por shell
+            - -c # Permite pasar un script como un string
+            - |
+
+              # Crea el directorio donde se guardarán los logs
+              mkdir -p /var/log/agent
+
+              # Bucle infinito -> el contenedor nunca termina
+              while true; do
+
+                # Obtiene el timestamp en formato ISO: (ej: 2026-04-17T15:00:00Z)
+                TIMESTAMP=$(date -Iseconds) # formato iso
+
+                # $HOSTNAME en kubernetes corresponde al nombre del nodo
+                NODE_NAME=$HOSTNAME
+
+                # Obtener el nombre del pod
+                POD_NAME=$(hostname)
+
+                # Mejora: niveles de logs dinámicos
+                # Simulamos comportamiento real de apps con niveles de logs (INFO, WARN, ERROR)
+
+                LEVEL="INFO" # Valor por defecto
+                RAND=$((RANDOM % 10)) # Número aleatorio entre 0 y 9
+
+                # Distribución de niveles
+                # 0-6 -> INFO (70%)
+                # 7-8 -> WARN (20%)
+                # 9 -> ERROR (10%)
+
+                if [ $RAND -le 6 ]; then
+                  LEVEL="INFO"
+                elif [ $RAND -le 8]; then
+                  LEVEL="WARN"
+                else
+                  LEVEL="ERROR"
+                fi
+
+                # Mejora: métricas simuladas
+                # Se generan valores aleatorios para simular uso del sistema
+                CPU=$((RANDOM % 100)) # Uso de CPU (0-99%)
+                MEMORY=$((RANDOM % 2048)) # Uso en Mi (0-2047)
+
+                # Imprimir un log en un formato: json
+                # Esto simula un agente de logging estructurado
+                LOG="{\"timestamp\":\"$TIMESTAMP\",\"node\":\"NODE_NAME\",\"pod\":\"$POD_NAME\",\"level\":\"$LEVEL\",\"cpu\":\"${CPU}%\",\"memory\":\"${MEMORY}Mi\",\"message\":\"log simulado desde nodo\"}"
+
+                # Salida estándar para el kubectl logs
+                echo $LOG
+
+                # Persistencia local en contenedores
+                # Guardar los logs en un archivo dentro del contenedor
+                echo $LOG >> /var/log/agent/log.json
+
+
+                # Espera 5 seg. antes de generar el siguiente log
+                sleep 5
+
+              done
+
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/log/agent
+
+      volumes:
+        - name: log-volume
+          emptyDir: {}
+          # Tipo de volumen:
+          # - Se crea cuando inicia el pod
+          # - Se elimina cuando el pod muere
+          # - No es persistente permanente
+          # - Ideal para logs temporales
