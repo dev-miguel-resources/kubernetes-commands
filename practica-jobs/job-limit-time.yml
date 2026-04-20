@@ -1,0 +1,27 @@
+# Una empresa necesitar procesar archivos de venta diariamente.
+# Para esto, ejecutamos un proceso batch que: muestre el resultado de ventas en consola
+# Requerimientos: crear el manifiesto en yaml, usar una imagen liviana busybox o alpine
+# ejecutar un script simple que simule procesamiento
+# Configurar: política de restablecimiento, máximos de reintentos, completaciones: 1 y paralelisimo: 1
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-ventas # nombre del Job
+spec:
+  completions: 1 # Número total de ejecuciones exitosas permitidas.
+  parallelism: 1 # Número máximo de pods ejecutándose al mismo tiempo.
+  backoffLimit: 3 # Cantidad máxima de reintentos si falla
+  #ttlSecondsAfterFinished: 30 # Se borra 30 seg. después de terminar.
+  activeDeadlineSeconds: 20 # Tiempo máximo total que puede durar el Job (20 seg).
+  template: # Plantilla del Pod que ejecutará el Job
+    spec:
+      restartPolicy: Never # No reinicia el contenedor dentro del mismo Pod si falla
+      containers:
+        - name: procesador # Nombre del contenedor dentro del pod
+          image: busybox
+          command: ["sh", "-c"] # Ejecutar comandos usando shell (sh)
+          args:
+            - | # Bloque multilinea de comandos
+              echo "Procesando ventas..." # Mensaje inicial
+              sleep 30 # Simula procesamiento (30 seg)
+              echo "Esto probablemente no se verá" # Problamente NO se ejecuta

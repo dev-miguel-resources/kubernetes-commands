@@ -87,6 +87,7 @@ spec:
 
       volumes:
         - name: host-logs
+          # backup a nivel de nodo
           hostPath:
             path: /var/log/daemonset-agent
             # Ruta real en el nodo

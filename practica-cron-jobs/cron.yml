@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: my-cronjob
+spec:
+  schedule: "*/1 * * * *" # Se ejecuta cada 1 minuto
+
+  # Control de historial (limpiezas automáticas)
+  successfulJobsHistoryLimit: 2 # Guarda solo los últimos 2 jobs exitosos
+  failedJobsHistoryLimit: 1 # Guarda solo 1 job fallido
+  concurrencyPolicy: Forbid # No permite que un nuevo job inicie si el anterior sigue en ejecución
+  jobTemplate:
+    spec:
+      backoffLimit: 2 # Máximo de retry si el Job falla
+      template:
+        spec:
+          containers:
+            - name: myjob
+              image: busybox:1.28
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Inicio del job: $(date)" # Muestra la fecha de inicio
+                  # Simulación de trabajo
+                  for i in 1 2 3 4 5; do # Mensaje por iteración
+                    echo "Procesando paso $i..."
+                    sleep 5 # Espera de 5 seg. por paso
+                    done
+
+                    echo "Fin del job: $(date)" # Muestra fecha de término
+          restartPolicy: OnFailure # sI falla el contenedor, se reinicia dentro del mismo Pod
