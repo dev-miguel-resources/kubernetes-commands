@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-affinity
+spec:
+  selector:
+    matchLabels:
+      app: affinity
+  template:
+    metadata:
+      labels:
+        app: affinity
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          resources: {}
+
+      # Configuración de afinidad (como kubernetes decide en que nodo debe correr los pods)
+      affinity:
+        nodeAffinity:
+          # Reglas obligatorias
+          # El POD solo se puede programar en nodos que cumplan esta condición
+          # Si no hay nodos compatibles -> el Pod queda en Pending
+          # Regla que primero verifica
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch # Etiqueta del nodo (arquitectura)
+                    operator: In # Operador: debe estar dentro de los valores
+                    values:
+                      - amd64 # Solo nodos con arquitectura amd64
+
+          # Reglas Preferidas (No obligatorias)
+          # Kubernetes intentará cumplir dichas reglas o evaluarlas dentro de lo posible
+          preferredDuringSchedulingIgnoredDuringExecution:
+            # Preferencia fuerte (peso 100 ptos)
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: gpu
+                    operator: In
+                    values:
+                      - "true" # Prefiere nodos con GPU disponible
+            # Evita cierta zona de despliegue (peso 50)
+            - weight: 50
+              preference:
+                matchExpressions:
+                  - key: zone
+                    operator: NotIn
+                    values:
+                      - us-east-1b # Prefiere nodos fuera de esta zona
+            - weight: 20
+              preference:
+                matchExpressions:
+                  - key: fast-ssd
+                    operator: Exists # Solo requiere que exista la etiqueta (key)

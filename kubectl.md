@@ -325,3 +325,29 @@ kubectl logs -f log-agent-2z4jt
 ```
 kubectl exec log-agent-2z4jt -- cat /var/log/agent/log.json
 ```
+
+### 54. Para agregar etiquetas a un objeto
+```
+kubectl label nodes minikube-m02 disktype=ssd
+```
+
+### 55. Para asignar clausulas (tains) a un nodo
+```
+kubectl taint nodes minikube-m02 env=production:NoSchedule
+```
+
+### 56. Para inspeccionar el node y revisar el taint
+```
+kubectl describe node minikube-m02
+```
+
+### 57. Para crear un taint flexible por key y sin value
+```
+kubectl taint nodes minikube-m03 gpu:NoSchedule
+```
+
+### 58. Para evitar asignaciones forzadas a un tolerations
+```
+kubectl taint nodes server:NoExecute
+```
+

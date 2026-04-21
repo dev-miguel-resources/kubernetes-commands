@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      nodeSelector:
+        disktype: hdd # Solo ejecuta pods en nodos que tengan dicha etiqueta
+      containers:
+        - name: app
+          image: nginx

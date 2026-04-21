@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-tolerations
+  labels:
+    name: tolerations
+spec:
+  tolerations: # Permite que el Pod "tolere" tains de nodos
+    - key: env # Clave del taint del nodo (ej: env=production:NoSchedule)
+      value: production # Valor el taint que puede tolerar
+      operator:
+        Equal # Operador:
+        # - Equal -> debe concidir la key y el value, control estricto muy usado en entornos de prod y dev
+        # - Exists -> solo importa la key, da lo mismo el valor (ignora value)
+      effect: NoSchedule # Evita que se agenden pods sin toleración
+  containers:
+    - name: toleration-app
+      image: nginx
+      ports:
+        - containerPort: 80
+# Este pod tolera nodos que tienen el taint env=production:NoSchedule

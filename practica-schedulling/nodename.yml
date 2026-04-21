@@ -1,0 +1,15 @@
+# nodename solo puede ser bloqueado por taints y tolerations (utilizando NoExecute)
+# nodename se salta las reglas de affinity y nodeSelector
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1-nodename
+  labels:
+    run: pod1
+spec:
+  nodeName: minikube # Fuerza que el Pod se ejecute en un nodo específico
+  containers:
+    - name: pod1
+      image: nginx
+
+  restartPolicy: Always # Siempre reinicia el contenedor si se detiene
