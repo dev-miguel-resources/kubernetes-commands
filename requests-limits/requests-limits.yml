@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-requests
+  labels:
+    name: requests-limits
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      resources:
+        requests:
+          # Si el nodo a asignar no contiene lo mínimo exigible elige otro.
+          memory: "100Mi" # -> Solicita 100 MiB de RAM.
+          cpu: "100m" # -> Solicita 100 milicores de CPU (equivale al 10% de 1 CPU).
+        limits:
+          # 2^10 = 1024
+          # 1ki = 1024 bytes
+          # 1Mi = 1024 Ki
+          # 1Gi = 1024 Mi
+          # Kubernetes trabaja en binario para la memoria, no en decimal.
+          memory: "500Mi" # -> El contenedor no podrá usar más de 500 MiB.
+          # La CPU si trabaja en decimal = base 1000
+          # m = milicores
+          cpu: "100m" # -> No puede usar más del 10% de un CPU.
+      ports:
+        - containerPort: 80
