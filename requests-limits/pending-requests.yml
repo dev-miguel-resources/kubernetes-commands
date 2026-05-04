@@ -1,0 +1,21 @@
+# Ejercicio 2 con CPU
+# Resultado esperado: Running
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-hog
+spec:
+  containers:
+    - name: stress
+      image: polinux/stress
+      command: ["stress"] # Indica explícitamente que ejecuta al arrancar.
+      args: ["--cpu", "1"] # Argumentos enviados al comando anterior.
+      # --cpu = generar carga de CPU
+      # 1 = crear 1 hilo consumidor de CPU
+      # En otras palabras: "quiero saturar 1 CPU"
+      resources: # Definir requisito y límites de recursos del contenedor.
+        requests:
+          cpu: "1900m" # Solicitamos 1900 milicores de CPU
+          # 1000m = 1 CPU
+          # 1900m = 1.9 CPU
+          # Necesito que reserves aprox. casi 2 núcles para mí

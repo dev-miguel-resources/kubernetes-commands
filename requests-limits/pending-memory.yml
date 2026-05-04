@@ -1,0 +1,19 @@
+# Ejercicio 4 con memory
+# Resultado esperado: Pending
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mem-hog-big
+spec:
+  containers:
+    - name: stress
+      image: polinux/stress
+      command: ["stress"] # stress 1 --vm-bytes 14G
+      args:
+        - --vm # Activa hilos de memoria virtual
+        - "1" # Número de hilos de memoria
+        - --vm-bytes # Definir cuánta memoria consumirá los hilos
+        - "14G" # Cada hilo intentará reservar catorce Gigabytes
+      resources:
+        requests:
+          memory: "14Gi" # Solicita 14 Gibityes de memoria RAM

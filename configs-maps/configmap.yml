@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mensaje-config
+data:
+  MENSAJE: "Bienvenidos"
+  CURSO: "Clase de ConfigMaps"

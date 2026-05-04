@@ -351,3 +351,13 @@ kubectl taint nodes minikube-m03 gpu:NoSchedule
 kubectl taint nodes server:NoExecute
 ```
 
+### 59. Para obtener las estadísticas de consumo real de mis nodos
+```
+kubectl top nodes
+```
+
+### 60. Para actualizar en tiempo de ejecución llaves de config-map
+```
+
+```
+

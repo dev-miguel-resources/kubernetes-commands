@@ -1,0 +1,23 @@
+# Ejercicio 6 con limite de cpu
+# Resultado esperado: Running
+# Limits.cpu actúa como un regulador de consumo.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-cpu-limit
+spec:
+  containers:
+    - name: stress
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          while true; do :; done # Script infinito de consumo intensivo de CPU.
+      resources:
+        requests:
+          memory: "100Mi"
+          cpu: "100m"
+        limits:
+          memory: "500Mi"
+          cpu: "200m"

@@ -1,3 +1,5 @@
+# Ejercicio 1: Donde todo funciona bien
+# Resultado esperado: running
 apiVersion: v1
 kind: Pod
 metadata:
@@ -22,6 +24,12 @@ spec:
           memory: "500Mi" # -> El contenedor no podrá usar más de 500 MiB.
           # La CPU si trabaja en decimal = base 1000
           # m = milicores
-          cpu: "100m" # -> No puede usar más del 10% de un CPU.
+          cpu: "200m" # -> No puede usar más del 20% de un CPU.
+          # Si un nodo no dispone simultáneamente de los recursos mínimos
+          # definidos en requests, Kubernetes intentará programar el Pod
+          # en otro nodo que sí cumpla con todos los requisitos.
+          # Si no hay nodos que lo puedan recibir queda en pending. Pero si
+          # hay otro nodo disponible de recursos lo puede recibir.
+          # Si alguno de los 2 recursos no cumple, no lo hace ninguno, el pod no se puede programar.
       ports:
         - containerPort: 80

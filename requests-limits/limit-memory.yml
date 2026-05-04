@@ -1,0 +1,26 @@
+# Ejercicio 5 con limite de memoria
+# Resultado esperado: CrashLoopBackOff
+# Limits.memory actúa como una barrera de ejecución
+# por tanto, si la memoria se excede ese recurso es removido del nodo.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-memory-limit
+spec:
+  containers:
+    - name: stress
+      image: polinux/stress
+      command: ["stress"] # stress 1 --vm-bytes 14G
+      args:
+        - --vm # Activa hilos de memoria virtual
+        - "1" # Número de hilos de memoria
+        - --vm-bytes # Definir cuánta memoria consumirá los hilos
+        - "600M" # Cada hilo intentará reservar catorce Gigabytes
+        - --vm-hang # Hace que la memoria quede ocupada
+      resources:
+        requests:
+          memory: "100Mi" # Solicita 100 Mib de memoria RAM
+          cpu: "100m" # Solicita 100 milicores de CPU. Equivale al 10%
+        limits:
+          memory: "500Mi" # Máximo de RAM permitido.
+          cpu: "200m" # Máximo de 20% de CPU.

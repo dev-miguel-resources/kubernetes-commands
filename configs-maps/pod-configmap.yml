@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-configmap
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command:
+        ["sh", "-c", "while true; do echo $MENSAJE - $CURSO; sleep 5; done"]
+      env:
+        - name: MENSAJE
+          valueFrom:
+            configMapKeyRef:
+              name: mensaje-config
+              key: MENSAJE
+        - name: CURSO
+          valueFrom:
+            configMapKeyRef:
+              name: mensaje-config
+              key: CURSO

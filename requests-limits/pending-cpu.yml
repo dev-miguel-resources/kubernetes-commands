@@ -1,0 +1,19 @@
+# Ejercicio 3 con cpu
+# Resultado esperado: Pending
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cpu-hog-big
+spec:
+  containers:
+    - name: stress
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          while true; do :; done # Script infinito de consumo intensivo de CPU.
+      resources:
+        requests:
+          cpu: "11800m" # Solicitando 11.8 CPU.
+

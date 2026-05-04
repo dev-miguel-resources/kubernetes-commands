@@ -1,8 +1,11 @@
+# Kubernetes decide el nodo solo cuando se crea el pod
+# Después: no lo reevalúa, no lo mueve, no aplica de nuevo affinity
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment-affinity
 spec:
+  replicas: 2 # Cantidad de pods que se desean ejecutar
   selector:
     matchLabels:
       app: affinity
@@ -29,7 +32,8 @@ spec:
                   - key: kubernetes.io/arch # Etiqueta del nodo (arquitectura)
                     operator: In # Operador: debe estar dentro de los valores
                     values:
-                      - amd64 # Solo nodos con arquitectura amd64
+                      #  - amd64 # Solo nodos con arquitectura amd64
+                      - amrd
 
           # Reglas Preferidas (No obligatorias)
           # Kubernetes intentará cumplir dichas reglas o evaluarlas dentro de lo posible
@@ -55,3 +59,15 @@ spec:
                 matchExpressions:
                   - key: fast-ssd
                     operator: Exists # Solo requiere que exista la etiqueta (key)
+            # Evitar nodos en mantenimiento (peso 10)
+            - weight: 10
+              preference:
+                matchExpressions:
+                  - key: maintenance
+                    operator: DoesNotExist # Prefiere nodos que NO tengan esta etiqueta
+      # Para permitir ejecutar pods en nodos con taints (Segunda verificación)
+      tolerations:
+        - key: gpu # Clave del taint del nodo
+          operator: Equal # Debe coincidir exactamente clave + valor
+          value: ml # Valor esperador del taint
+          effect: NoSchedule # Para poder programar el pod en nodos con taint
