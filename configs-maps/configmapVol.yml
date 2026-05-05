@@ -1,0 +1,28 @@
+# Manejo de volumen por generación de archivo
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  # Cuando se monte como volumen, esta clave se convertirá en un archivo
+  # Archivo resultante: /ruta-montaje/app.conf
+  app.conf: |
+    # Contenido del archivo app.conf
+    # Aquí estamos guardando la configuración de Nginx
+    server {
+      # Nginx escuchará por el puerto 80
+      listen 80;
+
+      # Nombre del servidor
+      # localhost significa que responderá localmente
+      server_name localhost;
+
+      # Configuración para la ruta raíz "/"
+      location / {
+
+        # Cada vez que alguien visite la web:
+        # devolverá un HTTP 200 OK con el siguiente mensaje:
+        # return 200 "Hola desde ConfigMap"
+      }
+
+    }

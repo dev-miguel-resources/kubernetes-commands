@@ -284,8 +284,9 @@ kubectl rollout status deploy nginx-deploy
 kubectl rollout history deploy nginx-deploy
 ```
 
-### 48. Para hacer un rollback controlado
+### 48. Para hacer un rollback directamente hacia la anterior y a una en específico
 ```
+kubectl rollout undo deploy nginx-deploy
 kubectl rollout undo deploy nginx-deploy --to-revision=3
 ```
 
@@ -358,6 +359,11 @@ kubectl top nodes
 
 ### 60. Para actualizar en tiempo de ejecución llaves de config-map
 ```
+kubectl edit cm app-config
+```
 
+### 61. Para generar un reinicio de un deploy
+```
+kubectl rollout restart deploy web
 ```
 

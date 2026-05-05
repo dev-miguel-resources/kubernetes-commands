@@ -1,0 +1,31 @@
+# Mediante rollout restart deploy podemos refrescar los cambios para que tome los nuevos valores del configmap
+# Opción 2: destruido un pod del deployment para que se vuelva a generar
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - while true; do
+              echo $MESSAGE;
+              sleep 10;
+              done
+          env:
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: web-config
+                  key: MESSAGE

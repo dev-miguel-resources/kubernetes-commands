@@ -1,0 +1,14 @@
+# No hay recargas en caliente de los valores de configmap por env
+# Las cargas de data de configmaps se generan en la creación del recurso por defecto
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-config-all
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - configMapRef:
+            name: app-config # referencia del configmap
+            # APP_NAME, APP_ENV, APP_PORT, LOG_LEVEL

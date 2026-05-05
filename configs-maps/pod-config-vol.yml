@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-config-volume
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      # Montaje de volúmenes dentro del contenedor
+      volumeMounts:
+        # Nombre lógico del volúmen
+        - name: config-volume
+          # Ruta dentro del contenedor donde se montará el volumen
+          # Aquí Nginx lee las configuraciones adicionales (*.conf)
+          mountPath: /etc/nginx/conf.d
+
+  # Definición de volúmenes disponibles para el Pod
+  volumes:
+    - name: config-volume
+      # Tipo de volumen: ConfigMap
+      # Kubernetes tomará información de un ConfigMap
+      # Nombre del ConfigMap que será montado
+      # En este caso usa ConfigMap/nginx-config
+      configMap:
+        name: nginx-config

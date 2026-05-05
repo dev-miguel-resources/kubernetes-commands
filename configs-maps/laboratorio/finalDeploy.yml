@@ -1,0 +1,156 @@
+# kubectl get deploy app-demo -o yaml
+# kubectl exec -it deploy/app-demo -- cat /secrets/DB_PASSWORD
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: app
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Loop infinito para mantener el contenedor activo
+              while true
+              do
+
+                echo "======================================"
+
+                # -----------------------------------------------
+                # VARIABLES DE ENTORNO DESDE CONFIGMAP
+                # -----------------------------------------------
+                echo "========= CONFIG ENV ==========="
+
+                # Variables inyectadas por envFrom
+                # Estas NO tienen hot reload
+                # Cambian solo si el POD se reinicia
+                echo "APP_NAME=$APP_NAME"
+                echo "APP_ENV=$APP_ENV"
+                echo "APP_PORT=$APP_PORT"
+
+                echo ""
+
+                # -----------------------------------------------
+                # VARIABLES DE ENTORNO DESDE SECRET
+                # -----------------------------------------------
+                echo "========= SECRET ENV ==========="
+
+                # Variables sensibles inyectadas por envFrom
+                # Tampoco tienen hot reload
+                # Cambian solo si el POD se reinicia
+                echo "DB_USER=$DB_USER"
+                echo "DB_PASSWORD=$DB_PASSWORD"
+                echo "API_KEY=$API_KEY"
+
+                echo ""
+
+                # -----------------------------------------------
+                # ARCHIVOS MONTADOS DESDE CONFIGMAP
+                # -----------------------------------------------
+                echo "========= CONFIG FILES ==========="
+
+                # Listar archivos generados automáticamente
+                # Cada key del ConfigMap se convierte en archivo
+                ls /config
+
+                echo ""
+
+                # Leer archivo multílinea del ConfigMap
+                echo "Contenido app.properties:"
+                cat /config/app.properties
+
+                echo ""
+
+                # Leer APP_ENV como archivo
+                # Si editamos ConfigMap esto cambia automáticamente
+                echo "Contenido APP_ENV:"
+                cat config/APP_ENV
+
+                echo ""
+
+                # Leer APP_PORT como archivo:
+                echo "Contenido de APP_PORT:"
+                cat config/APP_PORT
+
+                echo ""
+
+                # -----------------------------------------------
+                # ARCHIVOS MONTADOS DESDE SECRET
+                # -----------------------------------------------
+                echo "========= SECRET FILES ==========="
+
+                # Listar archivos generados desde Secret
+                ls /secrets
+
+                echo ""
+
+                # Leer usuario DB desde archivo
+                echo "Contenido DB_USER:"
+                cat /secrets/DB_USER
+
+                # Leer password desde archivo
+                # Si editamos Secret esto cambia automáticamente
+                echo "Contenido DB_PASSWORD:" 
+                cat /secrets/DB_PASSWORD
+
+                # Leer API key desde archivo
+                echo "Contenido API_KEY:" 
+                cat /secrets/API_KEY
+
+                echo ""
+
+                # Mostrar fecha/hora de iteración
+                echo "Fecha:"
+                date
+
+                echo "==================================="
+
+                # Esperar 5 seg. y repetir
+                sleep 5
+              done
+
+          # -----------------------------------------------
+          # MONTAJE DE VOLÚMENES
+          # -----------------------------------------------
+          volumeMounts:
+            # Montar ConfigMap como archivos
+            - name: config-volume
+              # Ruta para los archivos
+              # /config/APP_NAME
+              # /config/APP_ENV
+              # /Config/APP_PORT
+              # /config/app.properties
+              mountPath: /config
+
+            # Montar Secret como archivos
+            - name: secret-volume
+              # /secrets/DB_USER
+              # /secrets/DB_PASSWORD
+              # /secrets/API_KEY
+              mountPath: /secrets
+
+        # -----------------------------------------------
+        # DEFINICIÓN DE VOLÚMENES
+        # -----------------------------------------------
+      volumes:
+        # Volumen basado en ConfigMap
+        - name: config-volume
+          configMap:
+            # Nombre del ConfigMap fuente
+            name: app-config
+
+        # Volumen basado en secret
+        - name: secret-volume
+          secret:
+            # Nombre del Secret fuente
+            secretName: app-secret
