@@ -1,0 +1,28 @@
+# Parte 6 - Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+  namespace: laboratorio-services
+spec:
+  rules:
+    # Hostname que escuchará este Ingress
+    # cuando alguien visite a: http://webapp.local
+    # Kubernetes aplicará esta regla.
+    # 127.0.0.1 webapp.local
+    - host: webapp.local
+      # Configuración de tráfico HTTP
+      http:
+        # Lista de rutas que manejará el dominio registrado
+        paths:
+          # Ruta raíz: /
+          - pathType: Prefix # Coincide por definición de prefijo: /, /home, /productos, /contacto
+            # Exact: /, solo aplica /
+            path: "/"
+            # Backend: destino interno donde será enviada la petición
+            backend:
+              # Tipo de backend = Service Kubernetes
+              service:
+                name: webapp-clusterip
+                port:
+                  number: 80

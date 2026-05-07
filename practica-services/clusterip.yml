@@ -1,0 +1,19 @@
+# Parte 3 - Service tipo ClusterIP
+# kubectl apply -f clusterip.yml
+# kubectl get svc -n laboratorio-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-clusterip
+  namespace: laboratorio-services
+spec:
+  type: ClusterIP # este es el valor por defecto si no se habilita el tipo
+  selector:
+    app: webapp
+  ports:
+    # Puerto lógico interno del Service, ej: http://webapp-clusterip:80
+    - port: 80
+      # Puerto interno del contenedor donde escucha la aplicación.
+      # Kubernetes recibie trafico en "port"
+      # y luego lo redirige a este puerto del Pod.
+      targetPort: 80

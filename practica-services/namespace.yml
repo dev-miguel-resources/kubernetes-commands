@@ -1,0 +1,7 @@
+# Parte 1 - Crear Namespace
+# kubectl apply -f namespace.yml
+# kubectl get ns
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: laboratorio-services

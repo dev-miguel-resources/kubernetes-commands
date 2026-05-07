@@ -1,0 +1,30 @@
+# Parte 2 - Crear Deployment
+# kubectl apply -f deployment.yml
+# kubectl get po -n laboratorio-services -o wide
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: laboratorio-services
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

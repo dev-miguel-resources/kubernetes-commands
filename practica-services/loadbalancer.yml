@@ -1,0 +1,22 @@
+# Parte 5 - Service tipo LoadBalancer
+# kubectl apply -f loadbalancer.yml
+# kubectl get svc -n laboratorio-services
+# minikube tunnel
+# kubectl get svc -n laboratorio-services (esto se realiza en otra consola)
+# Abrir el navegador: http://external-ip
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-lb
+  namespace: laboratorio-services
+spec:
+  type: LoadBalancer
+  selector:
+    app: webapp
+  ports:
+    # Puerto lógico interno del Service, ej: http://webapp-clusterip:80
+    - port: 80
+      # Puerto interno del contenedor donde escucha la aplicación.
+      # Kubernetes recibie trafico en "port"
+      # y luego lo redirige a este puerto del Pod.
+      targetPort: 80
