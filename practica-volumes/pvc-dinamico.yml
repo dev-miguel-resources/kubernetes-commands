@@ -1,0 +1,55 @@
+# 🚀 Parte 2: StorageClass (Provisionamiento Dinámico)
+#Ahora viene lo importante para producción 👇
+
+#🔹 Paso 1: Ver StorageClass disponibles
+#kubectl get storageclass
+
+#En Minikube normalmente aparece algo como:
+
+#standard (default)
+
+# 🔹 Paso 2: Crear un PVC usando StorageClass
+# kubectl apply -f pvc-dinamico.yaml
+# kubectl get pvc
+# kubectl get pv
+# 💡 Aquí pasa lo clave:
+# NO creaste PV manualmente
+# Kubernetes crea un PV automáticamente 🎯
+# Explicación para clase
+
+#Este YAML le dice a Kubernetes:
+
+#"Necesito 1Gi de almacenamiento persistente y quiero que lo crees automáticamente usando la clase standard."
+# PVC solicita almacenamiento -> StorageClass "standard" -> Provisioner dinámico crea PV -> PVC queda Bound -> Pod puede usarlo
+apiVersion: v1 # Versión de la API de Kubernetes (core API)
+kind: PersistentVolumeClaim # Tipo de recurso: solicitud de almacenamiento persistente (PVC)
+
+metadata:
+  name:
+    pvc-dinamico # Nombre del PVC
+    # Será el identificador que luego usarán Pods/Deployments
+    # para montar este almacenamiento
+
+spec:
+  accessModes:
+    - ReadWriteOnce # Modo de acceso solicitado
+      # ReadWriteOnce (RWO):
+      # permite montar el volumen en modo lectura/escritura
+      # desde UN solo nodo a la vez
+
+  resources:
+    requests:
+      storage:
+        1Gi # Cantidad de almacenamiento solicitada
+        # Aquí la aplicación pide 1 Gigabyte persistente
+
+  storageClassName:
+    standard # Clase de almacenamiento a utilizar
+    # "standard" normalmente es la StorageClass por defecto
+    # (por ejemplo en Minikube suele existir)
+
+    # Kubernetes buscará esta clase y automáticamente
+    # provisionará (creará) un PersistentVolume compatible
+
+    # Es decir:
+    # PVC -> StorageClass -> crea PV automáticamente

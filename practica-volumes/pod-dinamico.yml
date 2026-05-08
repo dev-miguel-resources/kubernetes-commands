@@ -1,0 +1,48 @@
+# 🔹 Paso 3: Usar PVC dinámico en un Pod
+# 🧠 Concepto clave (explícalo con manzanitas 🍎)
+# 🔹 PV (Persistent Volume)
+
+# 👉 Es el disco real
+
+# Lo crea el admin
+# Vive en el clúster
+#🔹 PVC (Persistent Volume Claim)
+
+# 👉 Es la solicitud del desarrollador
+
+# “Dame 1GB de almacenamiento”
+# 🔹 StorageClass
+
+# 👉 Es el automatizador
+
+# “Si alguien pide storage → créalo solo”
+# ⚔️ Comparación final
+# kubectl apply -f pod-dinamico.yml
+# kubectl exec -it pod-dinamico -- cat /data/test.txt
+# kubectl delete pod pod-dinamico
+# 👉 Volver a crearlo y revisar: kubectl apply -f pod-dinamico.yml
+# kubectl exec -it pod-dinamico -- cat /data/test.txt
+# Concepto	Quién lo crea	Uso real
+# PV	Admin	Bajo nivel
+# PVC	Dev	Uso diario
+# StorageClass	Admin	Producción
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-dinamico
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Storage dinámico funcionando" > /data/test.txt
+          sleep 3600
+      volumeMounts:
+        - mountPath: /data
+          name: volumen
+  volumes:
+    - name: volumen
+      persistentVolumeClaim:
+        claimName: pvc-dinamico

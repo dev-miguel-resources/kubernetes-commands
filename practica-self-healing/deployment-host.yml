@@ -1,0 +1,68 @@
+apiVersion: apps/v1 # Versión de la API para recursos tipo Deployment
+kind:
+  Deployment # Tipo de recurso: Deployment
+  # Permite administrar Pods declarativamente
+  # y mantener la cantidad deseada de réplicas
+
+metadata:
+  name: app-readiness # Nombre del Deployment
+  namespace: laboratorio-health # Namespace donde se desplegará
+
+spec:
+  replicas:
+    2 # Cantidad de Pods que Kubernetes debe mantener activos
+    # Si uno cae, automáticamente crea otro (Self-Healing)
+
+  selector:
+    matchLabels:
+      app:
+        readiness # Selector que identifica qué Pods pertenecen
+        # a este Deployment mediante labels
+
+  template: # Plantilla que define cómo serán creados los Pods
+    metadata:
+      labels:
+        app:
+          readiness # Label que llevará cada Pod creado
+          # Debe coincidir con el selector anterior
+
+    spec:
+      containers:
+        - name: app # Nombre del contenedor
+          image: nginx # Imagen utilizada (servidor web nginx)
+
+          command:
+            ["/bin/sh", "-c"] # Sobrescribe el comando por defecto
+            # Ejecutará un shell Linux para correr múltiples comandos
+
+          args:
+            - | # Script multilinea que ejecutará el contenedor
+
+
+              echo $HOSTNAME > /usr/share/nginx/html/index.html
+              # Escribe el nombre del Pod (hostname) en la página principal
+              # Cada réplica mostrará su propio nombre
+              # Esto permite identificar qué Pod respondió
+
+              nginx -g 'daemon off;'
+              # Inicia nginx en foreground
+              # "daemon off" evita que nginx se vaya a segundo plano
+              # Si nginx termina, el contenedor termina
+
+          readinessProbe: # Probe de disponibilidad
+            # Kubernetes pregunta:
+            # "¿estás listo para recibir tráfico?"
+
+            httpGet: # Tipo de verificación: petición HTTP
+              path: / # Hace GET /
+              port: 80 # Sobre el puerto 80
+
+            initialDelaySeconds:
+              5 # Espera 5 segundos antes de la primera verificación
+              # Da tiempo a que nginx inicie
+
+            periodSeconds:
+              3 # Luego verifica cada 3 segundos
+              # Si responde OK -> Ready=True
+              # Si falla -> Ready=False
+              # El Service deja de enviarle tráfico

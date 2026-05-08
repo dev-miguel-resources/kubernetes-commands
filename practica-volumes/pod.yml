@@ -1,0 +1,30 @@
+# 🔹 Paso 3: Usar el PVC en un Pod
+# kubectl apply -f pod.yaml
+# kubectl exec -it pod-pv -- cat /data/mensaje.txt
+# 🔹 Paso 4: Probar persistencia
+# 👉 Eliminar el Pod:
+# kubectl delete pod pod-pv
+# 👉 Volver a crearlo y revisar: kubectl apply -f pod.yaml
+# kubectl exec -it pod-pv -- cat /data/mensaje.txt
+# 💥 Resultado esperado:
+# El archivo sigue existiendo → almacenamiento persistente funcionando.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-pv
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Hola desde volumen persistente" > /data/mensaje.txt
+          sleep 3600
+      volumeMounts:
+        - mountPath: /data
+          name: volumen
+  volumes:
+    - name: volumen
+      persistentVolumeClaim:
+        claimName: pvc-lab

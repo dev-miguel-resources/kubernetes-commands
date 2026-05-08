@@ -1,0 +1,48 @@
+# kubectl get endpoints -n laboratorio-health
+# Verás IPs de Pods listos.
+# Veré los 2 pods saludables.
+# Parte 5 — Romper Readiness: kubectl exec -it <pod> -n laboratorio-health -- sh
+# Eliminar contenido servido: rm /usr/share/nginx/html/index.html
+# Readiness empieza a fallar.
+# kubectl get pods -n laboratorio-health
+# Salida: 0/1 Ready (El Pod sigue vivo, pero no recibe tráfico).
+#Diferencia clave
+#Liveness
+#Pregunta: ¿estás vivo? No → reinicio
+#Readiness
+#Pregunta: ¿estás listo? No → sale del balanceo
+# Alta disponibilidad + recuperación automática
+# kubectl get endpoints -n laboratorio-health
+# kubectl run tester --rm -it --image=busybox -- sh
+# wget -qO- http://app-readiness-service.laboratorio-health.svc.cluster.local
+apiVersion: v1 # Versión de la API base de Kubernetes
+kind:
+  Service # Tipo de recurso: Service
+  # Permite exponer Pods mediante una IP estable
+  # y balancear tráfico entre múltiples réplicas
+
+metadata:
+  name: app-readiness-service # Nombre del Service
+  namespace: laboratorio-health # Namespace donde será creado
+
+spec:
+  selector:
+    app:
+      readiness # Selector de labels
+      # Este Service buscará Pods que tengan:
+      #
+      # app: readiness
+      #
+      # Normalmente coincide con el label del Deployment
+      # y así sabe a qué Pods enviar tráfico
+
+  ports:
+    - port:
+        80 # Puerto expuesto por el Service
+        # Es el puerto que otros Pods/servicios usarán
+        # para conectarse
+
+      targetPort:
+        80 # Puerto interno del contenedor
+        # El tráfico que llega al Service por el puerto 80
+        # será redirigido al puerto 80 de cada Pod

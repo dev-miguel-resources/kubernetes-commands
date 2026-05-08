@@ -1,0 +1,24 @@
+# 🧩 Parte 1: PV + PVC (Provisionamiento Estático)
+# 🔹 Paso 1: Crear un Persistent Volume
+# kubectl apply -f pv.yml
+# kubectl get pv
+apiVersion: v1 # Versión de la API de Kubernetes para objetos base (core API)
+kind: PersistentVolume # Tipo de recurso: un volumen persistente del clúster
+
+metadata:
+  name: pv-lab # Nombre único que identificará este PV dentro del clúster
+
+spec:
+  capacity:
+    storage: 1Gi # Capacidad total disponible del volumen (1 Gigabyte)
+
+  accessModes:
+    - ReadWriteOnce # Modo de acceso:
+      # ReadWriteOnce = puede montarse como lectura/escritura
+      # por UN solo nodo al mismo tiempo
+
+  hostPath:
+    path:
+      /mnt/data-lab # Ruta física en el nodo donde se almacenarán los datos
+      # Kubernetes usará esa carpeta del host como almacenamiento
+      # Todo lo escrito ahí persistirá aunque el Pod se elimine

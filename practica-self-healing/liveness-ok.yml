@@ -1,0 +1,53 @@
+# Parte 3 — Liveness funcionando
+# Crear archivo de salud
+apiVersion: v1 # Versión de la API base de Kubernetes
+kind:
+  Pod # Tipo de recurso: Pod
+  # Es la unidad mínima desplegable en Kubernetes
+
+metadata:
+  name: app-liveness-ok # Nombre del Pod
+  namespace: laboratorio-health # Namespace donde será creado
+
+spec:
+  containers:
+    - name: app # Nombre del contenedor dentro del Pod
+      image: busybox # Imagen liviana de Linux, ideal para laboratorios
+
+      command:
+        ["/bin/sh", "-c"] # Sobrescribe el comando por defecto
+        # Ejecutará un shell para correr comandos Linux
+
+      args:
+        - touch /tmp/healthy && sleep 3600
+          # touch /tmp/healthy:
+          # crea un archivo llamado "healthy"
+          # Este archivo será usado por la livenessProbe
+          # como indicador de salud
+
+          # sleep 3600:
+          # mantiene vivo el contenedor por 1 hora
+          # Si no existiera este sleep, el contenedor terminaría inmediatamente
+
+      livenessProbe: # Probe de salud interna
+        # Kubernetes pregunta:
+        # "¿sigues vivo / funcionando correctamente?"
+
+        exec: # Tipo de verificación: ejecutar comando dentro del contenedor
+          command:
+            - cat
+            - /tmp/healthy
+            # Kubernetes ejecuta:
+            # cat /tmp/healthy
+            #
+            # Si el archivo existe → comando OK → Healthy
+            # Si no existe → comando falla → Unhealthy
+
+        initialDelaySeconds:
+          5 # Espera 5 segundos antes de hacer la primera verificación
+          # Da tiempo al contenedor para iniciar
+
+        periodSeconds:
+          5 # Luego verifica cada 5 segundos
+          # Si la probe falla repetidamente:
+          # Kubernetes reinicia el contenedor automáticamente

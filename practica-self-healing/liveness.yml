@@ -1,0 +1,50 @@
+# kubectl apply -f liveness.yml
+# kubectl get po -n laboratorio-health
+# kubectl get pod -n laboratorio-health -w
+# kubectl describe pod app-liveness -n laboratorio-health
+# significa:
+
+# Kubernetes intentó levantar el contenedor → probe falló → reinició → volvió a fallar → reinició muchas veces → entró en CrashLoopBackOff.
+apiVersion: v1 # Versión de la API base de Kubernetes
+kind:
+  Pod # Tipo de recurso: Pod
+  # Unidad mínima desplegable dentro del clúster
+
+metadata:
+  name: app-liveness # Nombre asignado al Pod
+  namespace: laboratorio-health # Namespace donde será creado
+
+spec:
+  containers:
+    - name: app # Nombre del contenedor dentro del Pod
+      image: nginx # Imagen utilizada (servidor web nginx)
+
+      livenessProbe: # Probe de salud interna
+        # Kubernetes pregunta periódicamente:
+        # "¿la aplicación sigue viva?"
+
+        exec: # Tipo de verificación: ejecutar un comando dentro del contenedor
+          command:
+            - cat
+            - /tmp/healthy
+            # Kubernetes ejecutará internamente:
+            #
+            # cat /tmp/healthy
+            #
+            # Si el archivo existe:
+            # -> comando exitoso (exit code 0)
+            # -> contenedor healthy
+            #
+            # Si no existe:
+            # -> comando falla
+            # -> contenedor unhealthy
+            # -> Kubernetes lo reinicia automáticamente
+
+        initialDelaySeconds:
+          10 # Espera 10 segundos antes de hacer la primera comprobación
+          # Esto permite que nginx termine de iniciar
+
+        periodSeconds:
+          5 # Luego revisa cada 5 segundos
+          # Kubernetes seguirá comprobando la salud
+          # de forma periódica durante toda la vida del Pod

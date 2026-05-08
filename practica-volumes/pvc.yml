@@ -1,0 +1,42 @@
+# 🔹 Paso 2: Crear un Persistent Volume Claim
+# kubectl apply -f pvc.yaml
+# kubectl get pvc
+# kubectl get pv,pvc
+# 💡 Aquí ocurre el “match”:
+# PVC pide 500Mi
+# PV tiene 1Gi → ✅ se enlazan (Bound)
+# Explicación para clase
+
+# Aquí no estamos creando almacenamiento, estamos pidiéndolo.
+
+# Es como decirle a Kubernetes:
+
+# "Necesito un disco persistente de 500Mi para mi aplicación"
+
+# Kubernetes entonces busca un PV compatible que cumpla:
+
+# ✅ tenga espacio suficiente
+# ✅ tenga el mismo accessMode
+# ✅ esté libre (Available)
+apiVersion: v1 # Versión de la API de Kubernetes (core API)
+kind: PersistentVolumeClaim # Tipo de recurso: solicitud de almacenamiento persistente
+
+metadata:
+  name:
+    pvc-lab # Nombre del PVC (Persistent Volume Claim)
+    # Será el identificador que luego usarán Pods/Deployments
+    # para conectarse a este almacenamiento
+
+spec:
+  accessModes:
+    - ReadWriteOnce # Modo de acceso solicitado:
+      # ReadWriteOnce = lectura/escritura por un solo nodo
+      # Debe coincidir con un PV compatible
+
+  resources:
+    requests:
+      storage:
+        500Mi # Cantidad de almacenamiento solicitada
+        # Aquí el PVC pide 500 Megabytes
+        # Kubernetes buscará un PV disponible
+        # que tenga AL MENOS ese tamaño

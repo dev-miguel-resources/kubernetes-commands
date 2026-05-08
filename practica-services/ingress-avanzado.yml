@@ -1,0 +1,138 @@
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: empresa-ingress
+
+  namespace: laboratorio-services
+
+# Especificación del Ingress
+spec:
+  # Lista de reglas de entrada
+  rules:
+    # Dominio que escuchará este Ingress
+    #
+    # Cuando un usuario visite:
+    #
+    # http://empresa.local
+    #
+    # se evaluarán las reglas siguientes.
+    #
+    # En laboratorio local se simula agregando:
+    #
+    # 127.0.0.1 empresa.local
+    #
+    # en el archivo hosts de Windows.
+    #
+    - host: empresa.local
+
+      # Configuración HTTP
+      http:
+        # Lista de rutas disponibles
+        paths:
+          #################################################
+          # REGLA 1 -> FRONTEND
+          #################################################
+
+          # Ruta raíz "/"
+          #
+          # Coincide con:
+          #
+          # http://empresa.local/
+          #
+          # normalmente corresponde al frontend
+          # o página principal de la aplicación.
+          #
+          - path: /
+
+            # Prefix significa:
+            # todo lo que comience con "/"
+            #
+            # Ej:
+            # /
+            # /home
+            # /productos
+            # /contacto
+            #
+            pathType: Prefix
+
+            # Destino interno
+            backend:
+              service:
+                # Service Kubernetes que recibirá
+                # la petición.
+                #
+                # Este Service luego balanceará
+                # tráfico entre sus Pods.
+                #
+                name: frontend-service
+
+                # Puerto del Service
+                port:
+                  number: 80
+
+          #################################################
+          # REGLA 2 -> AUTH
+          #################################################
+
+          # Ruta /auth
+          #
+          # Coincide con:
+          #
+          # http://empresa.local/auth
+          # http://empresa.local/auth/login
+          # http://empresa.local/auth/register
+          #
+          # normalmente se utiliza para:
+          # - login
+          # - registro
+          # - JWT
+          # - autenticación
+          #
+          - path: /auth
+
+            # Coincidencia por prefijo
+            pathType: Prefix
+
+            # Backend interno
+            backend:
+              service:
+                # Service de autenticación
+                name: auth-service
+
+                # Puerto expuesto por ese Service
+                port:
+                  number: 80
+
+          #################################################
+          # REGLA 3 -> PAGOS
+          #################################################
+
+          # Ruta /pay
+          #
+          # Coincide con:
+          #
+          # http://empresa.local/pay
+          # http://empresa.local/pay/checkout
+          # http://empresa.local/pay/history
+          #
+          # normalmente asociado a:
+          # - checkout
+          # - transacciones
+          # - historial de compras
+          #
+          - path: /pay
+
+            # Coincidencia por prefijo
+            pathType: Prefix
+
+            # Destino interno
+            backend:
+              service:
+                # Service encargado de pagos
+                name: pagos-service
+
+                # Puerto del Service
+                port:
+                  number: 80

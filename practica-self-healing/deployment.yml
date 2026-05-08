@@ -1,0 +1,50 @@
+apiVersion: apps/v1 # Versión de la API utilizada para recursos tipo Deployment
+kind:
+  Deployment # Tipo de recurso: Deployment
+  # Permite administrar Pods automáticamente,
+  # mantener réplicas y aplicar Self-Healing
+
+metadata:
+  name: app-readiness # Nombre del Deployment
+  namespace: laboratorio-health # Namespace donde será desplegado
+
+spec:
+  replicas:
+    2 # Kubernetes mantendrá 2 Pods activos siempre
+    # Si uno falla o se elimina, crea otro automáticamente
+
+  selector:
+    matchLabels:
+      app:
+        readiness # Selector que identifica qué Pods pertenecen
+        # a este Deployment mediante labels
+
+  template: # Plantilla que define cómo serán creados los Pods
+    metadata:
+      labels:
+        app:
+          readiness # Label asignado a cada Pod
+          # Debe coincidir con el selector anterior
+
+    spec:
+      containers:
+        - name: app # Nombre del contenedor
+          image: nginx # Imagen utilizada (servidor web nginx)
+
+          readinessProbe: # Probe de disponibilidad
+            # Kubernetes pregunta:
+            # "¿estás listo para recibir tráfico?"
+
+            httpGet: # Tipo de verificación: petición HTTP
+              path: / # Hace una petición GET a la ruta raíz "/"
+              port: 80 # Sobre el puerto 80 donde escucha nginx
+
+            initialDelaySeconds:
+              5 # Espera 5 segundos antes de hacer la primera comprobación
+              # Esto da tiempo a que la aplicación arranque
+
+            periodSeconds:
+              3 # Luego verifica cada 3 segundos
+              # Si responde correctamente → Ready=True
+              # Si falla → Ready=False
+              # El Pod sigue vivo, pero el Service deja de enviarle tráfico
